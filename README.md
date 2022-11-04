@@ -1,2 +1,2 @@
-# runberry
+# runbarry
 Run statistics software
