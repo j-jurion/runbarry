@@ -25,6 +25,7 @@ class Insert(QWidget):
         self.date.setFixedHeight(170)
 
         self.distance = QLineEdit()
+        self.distance.setValidator(QDoubleValidator().setNotation(QDoubleValidator.Notation.StandardNotation))
         self.distance.setFixedWidth(WIDGET_WIDTH)
 
         self.time = QLineEdit ()
@@ -107,7 +108,7 @@ class Insert(QWidget):
     
     def submit(self, name, date, distance, time, pace, speed):
         self.database.insert_activity((name, date, distance, time, pace, speed))
-        print("Submitted")
+        #print("Submitted")
 
     def display(self):
         self.submit_status.hide()

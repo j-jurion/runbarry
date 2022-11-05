@@ -1,6 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 from datetime import timedelta, datetime
+from dateutil.relativedelta import relativedelta
+
 
 class DatabaseHandler():
 
@@ -55,33 +57,30 @@ class DatabaseHandler():
 
     def insert_activity(self, activity_list):
         self.create_connection()
-        cmd = ''' INSERT INTO activities(name,date, distance, time, pace, speed)
-              VALUES(?,?,?,?,?,?) '''
+        cmd = f''' INSERT INTO activities(name,date, distance, time, pace, speed)
+              VALUES{activity_list} '''
+        self.cmd_to_database(cmd)
 
-        cursor = self.conn.cursor()
-        cursor.execute(cmd, activity_list)
-        self.update_monthly(cursor, activity_list)
-        self.conn.commit()
+        self.update_monthly(activity_list)
         self.latest_activity = self.find_latest_activity()
-        self.close_connection()
 
-        return cursor.lastrowid
 
-    def get_from_database(self, cmd):
+    def cmd_to_database(self, cmd, fetch=False):
         self.create_connection()
-        
         cursor = self.conn.cursor()
         cursor.execute(cmd)
-        records = cursor.fetchall()
-        
+        if fetch:
+            records = cursor.fetchall()
+            self.close_connection()
+            return records
+        self.conn.commit()
         self.close_connection()
-
-        return records
+        
 
     def get_activities(self, filter, sort_by, order):
         if filter == "All":
-            return self.get_from_database(f'''SELECT * FROM activities ORDER BY {sort_by} {order}''')
-        return self.get_from_database(f'''SELECT * FROM activities WHERE distance BETWEEN {filter-1} and {filter+1} ORDER BY {sort_by} {order} ''')
+            return self.cmd_to_database(f'''SELECT * FROM activities ORDER BY {sort_by} {order}''', True)
+        return self.cmd_to_database(f'''SELECT * FROM activities WHERE distance BETWEEN {filter-1} and {filter+1} ORDER BY {sort_by} {order} ''', True)
         
     def find_latest_activity(self):
         try: 
@@ -92,7 +91,7 @@ class DatabaseHandler():
     ########################################################################
     # Monthly Functions
     ########################################################################
-    def update_monthly(self, cursor, activity_list):
+    def update_monthly(self, activity_list):
         month = activity_list[1][:7] ;#yyyy-mm
         distance = activity_list[2]
         try:
@@ -102,29 +101,66 @@ class DatabaseHandler():
 
         time = timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
 
-        cursor.execute("SELECT * FROM monthly WHERE month = ?", (month,))
-        data=cursor.fetchall()
+        data = self.cmd_to_database(f'''SELECT * FROM monthly WHERE month = "{month}"''', True)
         if len(data)==0:
-            cmd = ''' INSERT INTO monthly(month, tot_distance, tot_time, nb_activities)
-              VALUES(?,?,?,?) '''
-            cursor.execute(cmd, (month, distance, str(time), 1))
+            cmd = f''' INSERT INTO monthly (month, tot_distance, tot_time, nb_activities)
+              VALUES("{month}",{distance},"{str(time)}",1) '''
+            self.cmd_to_database(cmd)
+            self.fill_monthly(month)
         else: 
             data = data[0]
             new_tot_distance = data[2]+distance
             try:
-                t_data = datetime.strptime(data[3],"%H:%M:%S") 
+                t_data = datetime.strptime(data[3],"%d day, %H:%M:%S") 
             except ValueError:
-                t_data = datetime.strptime(data[3],"%M:%S") 
-            time_data = timedelta(hours=t_data.hour, minutes=t_data.minute, seconds=t_data.second)
-            new_tot_time = str(time_data+time)
+                try:
+                    t_data = datetime.strptime(data[3],"%d days, %H:%M:%S") 
+                except ValueError:
+                    try:
+                        t_data = datetime.strptime(data[3],"%H:%M:%S") 
+                    except ValueError:
+                        t_data = datetime.strptime(data[3],"%M:%S") 
+            time_data = timedelta(days = t_data.day, hours=t_data.hour, minutes=t_data.minute, seconds=t_data.second)
+            new_tot_time = str((time_data+time))
             new_nb_activity = data[4]+1
-            cmd = ''' UPDATE monthly
-              SET tot_distance = ? ,
-                  tot_time = ? ,
-                  nb_activities = ?
-              WHERE month = ?'''
-            cursor.execute(cmd, (new_tot_distance, new_tot_time, new_nb_activity, month))
+            cmd = f''' UPDATE monthly
+              SET tot_distance = {new_tot_distance} ,
+                  tot_time = "{new_tot_time}" ,
+                  nb_activities = {new_nb_activity}
+              WHERE month = "{month}"'''
+            self.cmd_to_database(cmd)
 
     def get_months(self):
-        return self.get_from_database(f'''SELECT * FROM monthly ORDER BY month DESC ''')
+        return self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month DESC ''', True)
+
+    def fill_monthly(self, month):
+        last_month = self.cmd_to_database(f'''SELECT month FROM monthly ORDER BY month DESC ''', True)[0][0]
+        first_month = self.cmd_to_database(f'''SELECT month FROM monthly ORDER BY month ASC ''', True)[0][0]
+        month = self.get_next_month(first_month)
+        while month != last_month:
+            print(f"month in loop {month}")
+
+            self.add_month(month)
+            month = self.get_next_month(month)
+
+        
+    def add_month(self, month):
+        data = self.cmd_to_database(f'''SELECT * FROM monthly WHERE month = "{month}"''', True)
+        print(f"data is {data}")
+        print(f"len(data) is {len(data)}")
+        if len(data)==0:
+            print(f"Inserting month {month}")
+            cmd = f''' INSERT INTO monthly(month, tot_distance, tot_time, nb_activities)
+              VALUES("{month}",0,"00:00",0) '''
+            self.cmd_to_database(cmd)
+
+    def get_previous_month(self, month):
+        month = datetime.strptime(month,"%Y-%m") 
+        previous_month = month - relativedelta(months=1)
+        return datetime.strftime(previous_month,"%Y-%m") 
+
+    def get_next_month(self, month):
+        month = datetime.strptime(month,"%Y-%m") 
+        next_month = month + relativedelta(months=1)
+        return datetime.strftime(next_month,"%Y-%m") 
         
