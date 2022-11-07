@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
-from timetemplate import TimeTemplate
+from helperclasses.timetemplate import TimeTemplate
 
 
 class DatabaseHandler():

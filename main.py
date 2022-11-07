@@ -1,17 +1,18 @@
 import sys
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
-from insert import Insert 
-from overview import Overview
-from stats import Statistics
-from databasehandler import DatabaseHandler
-from constants import Constants
+from screens.insert import Insert 
+from screens.overview import Overview
+from screens.stats import Statistics
+from helperclasses.databasehandler import DatabaseHandler
+from helperclasses.constants import Constants
 
 
 class MainWindow(QMainWindow):
     def __init__(self, db_file):
         super(MainWindow, self).__init__()
-        self.setWindowTitle("RunBarry")
+        self.setWindowIcon(QIcon(Constants.LOGO_FILENAME))
+        self.setWindowTitle(Constants.APP_NAME)
         self.resize(800, 600)
 
         self.db_file = db_file
@@ -91,7 +92,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     
-    window = MainWindow("activities.db")
+    window = MainWindow(Constants.DB_FILENAME)
     window.show()
 
     sys.exit(app.exec())

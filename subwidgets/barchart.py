@@ -6,7 +6,7 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from constants import Constants
+from helperclasses.constants import Constants
 
 class BarChartWidget(QWidget):
 

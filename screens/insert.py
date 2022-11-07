@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
-from constants import Constants
-from timetemplate import TimeTemplate, PaceTemplate
+from helperclasses.constants import Constants
+from helperclasses.timetemplate import TimeTemplate, PaceTemplate
 
 
 class Insert(QWidget):

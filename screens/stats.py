@@ -1,9 +1,9 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
-from bestefforttable import BestEffortTable
-from barchart import BarChartWidget
-from monthlytable import MonthlyTable
+from subwidgets.bestefforttable import BestEffortTable
+from subwidgets.barchart import BarChartWidget
+from subwidgets.monthlytable import MonthlyTable
 
 class Statistics(QWidget):
 

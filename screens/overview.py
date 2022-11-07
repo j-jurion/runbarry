@@ -1,9 +1,9 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
-from activitytable import ActivityTable
-from filterbox import Filter
-from sortbox import Sorter
+from subwidgets.activitytable import ActivityTable
+from subwidgets.filterbox import Filter
+from subwidgets.sortbox import Sorter
 
 class Overview(QWidget):
 

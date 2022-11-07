@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
-from constants import Constants
+from helperclasses.constants import Constants
 
 
 class ActivityTable(QWidget):
