@@ -1,10 +1,8 @@
-import re
-import math
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
-from datetime import timedelta, datetime
 from constants import Constants
+from timetemplate import TimeTemplate, PaceTemplate
 
 
 class Insert(QWidget):
@@ -92,19 +90,16 @@ class Insert(QWidget):
         self.distance.setText("")
         self.time.setText("")
 
-    def pace_to_speed(self, pace):
-        match = re.search(r"([0-9]):([0-5][0-9])", pace)
-        minutes = int(match.group(1))
-        seconds = int(match.group(2))
-        seconds += minutes*60
-        speed = 1/seconds*3600
-        return "%.1f" % speed
 
     def submit_pressed(self): 
-        self.pace = self.calc_pace(float(self.distance.text()), self.time.text())
         if self.is_valid_input(self.name.text(), self.distance.text(), self.time.text()):
+
+            time_submit = TimeTemplate(self.time.text())
+            self.pace = PaceTemplate(time_submit.__str__(), float(self.distance.text()))
+
             self.submit(self.name.text(), self.date.selectedDate().toString('yyyy-MM-dd'), float(self.distance.text()), 
-                self.time.text(), self.pace, self.pace_to_speed(self.pace))
+                time_submit.__str__(), self.pace.__str__(), self.pace.speed)
+
             self.submit_status_change(True, False, "Input is submitted!")
             self.clear_inputs()
     
@@ -115,20 +110,4 @@ class Insert(QWidget):
     def display(self):
         self.submit_status.hide()
         self.show()
-
-    def calc_pace(self, distance, time):
-        try:
-            t_data = datetime.strptime(time,"%H:%M:%S") 
-        except ValueError:
-            t_data = datetime.strptime(time,"%M:%S") 
-        
-        time_in_min = t_data.hour*60 + t_data.minute + t_data.second/60
-        pace = time_in_min/distance
-
-        p_min = int(pace)
-        p_sec = round((pace - p_min)*60)
-        
-        if p_sec < 10:
-            p_sec = f"0{p_sec}"
-        return f"{p_min}:{p_sec}"
         

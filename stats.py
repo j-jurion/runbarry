@@ -30,10 +30,8 @@ class Statistics(QWidget):
         self.bar_chart  = BarChartWidget(self.database)
         self.layout.addWidget(self.bar_chart )
 
-
         self.setLayout(self.layout)
         
-
 
     def refresh_stats(self):
         self.hori_layout.removeWidget(self.best_effort)

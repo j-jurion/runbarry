@@ -6,3 +6,5 @@ class Constants():
     DATA_UNITS = ["", "", "[km]", "", "[/km]", "[km/h]"]
     MONTH_DATA_TYPES = ["Month ", "Distance ", "Time ", "# Activities "]
     MONTH_DATA_UNITS = ["", "[km]", "", ""]
+
+    COLOR_PRIM = 'lightblue'

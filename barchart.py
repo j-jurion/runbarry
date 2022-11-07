@@ -6,8 +6,7 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-
+from constants import Constants
 
 class BarChartWidget(QWidget):
 
@@ -40,7 +39,7 @@ class BarChart(FigureCanvasQTAgg):
             x.append(m[1])
             y.append(m[2])
 
-        self.axes.bar(x, y, width=0.8, color='lightblue')
+        self.axes.bar(x, y, width=0.8, color=Constants.COLOR_PRIM)
 
         #elf.axes.set_xticklabels(x, rotation=45)
         #plt.xticks(rotation = 45)

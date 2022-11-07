@@ -1,14 +1,11 @@
 import sys
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
-from home import Home 
 from insert import Insert 
 from overview import Overview
 from stats import Statistics
 from databasehandler import DatabaseHandler
-
-
-
+from constants import Constants
 
 
 class MainWindow(QMainWindow):
@@ -22,7 +19,7 @@ class MainWindow(QMainWindow):
 
         # Button definition
         self.button_insert = QPushButton("Insert")
-        self.button_insert.setStyleSheet('font : bold ; background-color: lightblue')
+        self.button_insert.setStyleSheet(f'font : bold ; background-color: {Constants.COLOR_PRIM}')
         self.button_view_all = QPushButton("Activities")
         self.button_stats = QPushButton("Statistics")
 
@@ -85,7 +82,7 @@ class MainWindow(QMainWindow):
         self.button_view_all.setStyleSheet('')
         self.button_stats.setStyleSheet('')
         
-        button.setStyleSheet('font : bold ; background-color: lightblue')
+        button.setStyleSheet(f'font : bold ; background-color: {Constants.COLOR_PRIM}')
 
     def refresh_db(self):
         self.database = DatabaseHandler(self.db_file)

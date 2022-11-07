@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import Error
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
+from timetemplate import TimeTemplate
 
 
 class DatabaseHandler():
@@ -94,12 +95,7 @@ class DatabaseHandler():
     def update_monthly(self, activity_list):
         month = activity_list[1][:7] ;#yyyy-mm
         distance = activity_list[2]
-        try:
-            t = datetime.strptime(activity_list[3],"%H:%M:%S") 
-        except ValueError:
-            t = datetime.strptime(activity_list[3],"%M:%S") 
-
-        time = timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
+        time = TimeTemplate(activity_list[3])
 
         data = self.cmd_to_database(f'''SELECT * FROM monthly WHERE month = "{month}"''', True)
         if len(data)==0:
@@ -110,18 +106,7 @@ class DatabaseHandler():
         else: 
             data = data[0]
             new_tot_distance = "%.2f" % float(data[2]+distance)
-            try:
-                t_data = datetime.strptime(data[3],"%d day, %H:%M:%S") 
-            except ValueError:
-                try:
-                    t_data = datetime.strptime(data[3],"%d days, %H:%M:%S") 
-                except ValueError:
-                    try:
-                        t_data = datetime.strptime(data[3],"%H:%M:%S") 
-                    except ValueError:
-                        t_data = datetime.strptime(data[3],"%M:%S") 
-            time_data = timedelta(days = t_data.day, hours=t_data.hour, minutes=t_data.minute, seconds=t_data.second)
-            new_tot_time = str((time_data+time))
+            new_tot_time = time.add_times(data[3])
             new_nb_activity = data[4]+1
             cmd = f''' UPDATE monthly
               SET tot_distance = {new_tot_distance} ,
