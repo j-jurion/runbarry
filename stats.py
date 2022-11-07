@@ -14,29 +14,39 @@ class Statistics(QWidget):
 
         self.layout = QVBoxLayout()
 
+        self.hori_layout = QHBoxLayout()
+
         # Create Best Effort Table
         self.best_effort = BestEffortTable(self.database)
-        self.layout.addWidget(self.best_effort)
+        self.hori_layout.addWidget(self.best_effort)
 
-        # Create a Bar Chart
-        #self.bar_chart = BarChart(self.database)
-        #self.layout.addWidget(self.bar_chart)
-
+        
         # Create Monthly Table
         self.monthly_table = MonthlyTable(self.database)
-        self.layout.addWidget(self.monthly_table)
+        self.hori_layout.addWidget(self.monthly_table)
+
+        self.layout.addLayout(self.hori_layout)
+
+        # Create a Bar Chart
+        self.bar_chart  = BarChart(self.database)
+        self.layout.addWidget(self.bar_chart )
+
+
+
 
         self.setLayout(self.layout)
         
 
 
     def refresh_stats(self):
-        self.layout.removeWidget(self.best_effort)
-        self.layout.removeWidget(self.monthly_table)
+        self.hori_layout.removeWidget(self.best_effort)
+        self.layout.removeWidget(self.bar_chart)
+        self.hori_layout.removeWidget(self.monthly_table)
         self.best_effort = BestEffortTable(self.database)
         self.monthly_table = MonthlyTable(self.database)
-        self.layout.addWidget(self.best_effort)
-        self.layout.addWidget(self.monthly_table)
+        self.hori_layout.addWidget(self.best_effort)
+        self.hori_layout.addWidget(self.monthly_table)
+        self.layout.addWidget(self.bar_chart)
 
 
     def display(self, new_database):

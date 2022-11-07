@@ -18,7 +18,7 @@ class MonthlyTable(QWidget):
 
         # Horizontal Headers
         for d in range(len(Constants.MONTH_DATA_TYPES)):
-            label = QLabel(Constants.MONTH_DATA_TYPES[d])
+            label = QLabel(Constants.MONTH_DATA_TYPES[d] + Constants.MONTH_DATA_UNITS[d])
             label.setStyleSheet('''font-weight: bold;''')
             monthly_lyt.addWidget(label, 0, d)
 

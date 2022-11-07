@@ -2,32 +2,27 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 import pyqtgraph as pg
+import matplotlib
+matplotlib.use('Qt5Agg')
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
-class BarChart(QWidget):
+
+class BarChart(FigureCanvasQTAgg):
 
     def __init__(self, database):
-        super(BarChart, self).__init__()
+        fig = Figure(figsize=(5, 10), dpi=100)
+        self.axes = fig.add_subplot(111)
 
-        self.database = database
-
-        layout = QVBoxLayout()
-
-        plot = pg.plot()
- 
+        super(BarChart, self).__init__(fig)
+        
         x = []
         y = []
-        for m in self.database.get_months():
+        for m in database.get_months():
             x.append(m[1])
             y.append(m[2])
 
-        print(x)
-        print(y)
-        x = [1, 2]
- 
-        bargraph = pg.BarGraphItem(x = x, height = y, width = 0.6, brush ='b')
- 
-        plot.addItem(bargraph)
-
-        layout.addWidget(plot)
-        layout.addStretch()
-        self.setLayout(layout)
+        self.axes.bar(x, y, width=0.8, color='lightblue')
+        self.axes.set_xticklabels(x, rotation=45)
+        plt.xticks(rotation = 45)
