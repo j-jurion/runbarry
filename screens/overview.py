@@ -6,10 +6,36 @@ from subwidgets.filterbox import Filter
 from subwidgets.sortbox import Sorter
 
 class Overview(QWidget):
+    """
+    A widget which shows a complete list of activities on the database
+
+    ...
+
+    Attributes
+    ----------
+    database : DatabaseHandler
+        Current database handler
+    
+    Methods
+    -------
+    refresh_table()
+        Redefines the list of activities and recreates the table 
+        with the current database handler
+    display(new_database)
+        Shows widget using new_database as the current database handler
+
+    """
 
     def __init__(self, database):
+        """
+        Parameters
+        ----------
+        database : DatabaseHandler
+            Current database handler
+        """
         super(Overview, self).__init__()
 
+        # Define database handler
         self.database = database
 
         # Create Filter Widget
@@ -18,7 +44,7 @@ class Overview(QWidget):
         # Create Sorter Widget
         self.sorter = Sorter(self.refresh_table)
 
-        # Horizontal Layout: Filter + Sorter
+        # Horizontal Layout: Filter & Sorter
         fr_lyt = QHBoxLayout()
         fr_lyt.addLayout(self.filter.filter_lyt)
         fr_lyt.addLayout(self.sorter.sorter_lyt)
@@ -40,6 +66,10 @@ class Overview(QWidget):
         
 
     def refresh_table(self):
+        """
+        Redefines the list of activities and recreates the table 
+        with the current database handler
+        """
         self.activities = self.database.get_activities(self.filter.filter_distance(self.filter.filter_cb.currentText()), 
             self.sorter.sorter_cb.currentText(), self.sorter.order_btn_string())
 
@@ -49,6 +79,14 @@ class Overview(QWidget):
 
 
     def display(self, new_database):
+        """
+        Shows widget using new_database as the current database handler
+        
+        Parameters
+        ----------
+        new_database : DatabaseHandler
+            New database handler
+        """
         self.database = new_database
         self.refresh_table()
         self.show()

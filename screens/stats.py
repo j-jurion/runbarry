@@ -6,34 +6,63 @@ from subwidgets.barchart import BarChartWidget
 from subwidgets.monthlytable import MonthlyTable
 
 class Statistics(QWidget):
+    """
+    A widget which shows a statistics using the database
+
+    ...
+
+    Attributes
+    ----------
+    database : DatabaseHandler
+        Current database handler
+    
+    Methods
+    -------
+    refresh_stats()
+        Redefines the statistics with the current database handler
+    display(new_database)
+        Shows widget using new_database as the current database handler
+
+    """
 
     def __init__(self, database):
+        """
+        Parameters
+        ----------
+        database : DatabaseHandler
+            Current database handler
+        """
         super(Statistics, self).__init__()
 
+        # Defines database handler
         self.database = database
-
-        self.layout = QVBoxLayout()
-
-        self.hori_layout = QHBoxLayout()
-
+        
         # Create Best Effort Table
         self.best_effort = BestEffortTable(self.database)
-        self.hori_layout.addWidget(self.best_effort)
 
         # Create Monthly Table
         self.monthly_table = MonthlyTable(self.database)
-        self.hori_layout.addWidget(self.monthly_table)
-
-        self.layout.addLayout(self.hori_layout)
 
         # Create a Bar Chart
         self.bar_chart  = BarChartWidget(self.database)
-        self.layout.addWidget(self.bar_chart )
 
+        # Horizontal Layout: Best Effort + Monthly
+        self.hori_layout = QHBoxLayout()
+        self.hori_layout.addWidget(self.best_effort)
+        self.hori_layout.addWidget(self.monthly_table)
+
+        # Main layout 
+        self.layout = QVBoxLayout()
+        self.layout.addLayout(self.hori_layout)
+        self.layout.addWidget(self.bar_chart )
         self.setLayout(self.layout)
         
 
     def refresh_stats(self):
+        """
+        Redefines the statistics and recreates the widgets 
+        with the current database handler
+        """
         self.hori_layout.removeWidget(self.best_effort)
         self.hori_layout.removeWidget(self.monthly_table)
         self.best_effort = BestEffortTable(self.database)
@@ -47,6 +76,14 @@ class Statistics(QWidget):
 
 
     def display(self, new_database):
+        """
+        Shows widget using new_database as the current database handler
+        
+        Parameters
+        ----------
+        new_database : DatabaseHandler
+            New database handler
+        """
         self.database = new_database
         self.refresh_stats()
         self.show()      
