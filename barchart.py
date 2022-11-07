@@ -9,6 +9,16 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 
 
+class BarChartWidget(QWidget):
+
+    def __init__(self, database):
+        super(BarChartWidget, self).__init__()
+        layout = QVBoxLayout()
+        chart = BarChart(database)
+        layout.addWidget(chart)
+        self.setLayout(layout)
+
+
 class BarChart(FigureCanvasQTAgg):
 
     def __init__(self, database):
@@ -19,7 +29,7 @@ class BarChart(FigureCanvasQTAgg):
         
         x = []
         y = []
-        for m in database.get_months():
+        for m in reversed(database.get_months()):
             x.append(m[1])
             y.append(m[2])
 

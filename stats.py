@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from bestefforttable import BestEffortTable
-from barchart import BarChart
+from barchart import BarChartWidget
 from monthlytable import MonthlyTable
 
 class Statistics(QWidget):
@@ -20,7 +20,6 @@ class Statistics(QWidget):
         self.best_effort = BestEffortTable(self.database)
         self.hori_layout.addWidget(self.best_effort)
 
-        
         # Create Monthly Table
         self.monthly_table = MonthlyTable(self.database)
         self.hori_layout.addWidget(self.monthly_table)
@@ -28,10 +27,8 @@ class Statistics(QWidget):
         self.layout.addLayout(self.hori_layout)
 
         # Create a Bar Chart
-        self.bar_chart  = BarChart(self.database)
+        self.bar_chart  = BarChartWidget(self.database)
         self.layout.addWidget(self.bar_chart )
-
-
 
 
         self.setLayout(self.layout)
@@ -40,12 +37,14 @@ class Statistics(QWidget):
 
     def refresh_stats(self):
         self.hori_layout.removeWidget(self.best_effort)
-        self.layout.removeWidget(self.bar_chart)
         self.hori_layout.removeWidget(self.monthly_table)
         self.best_effort = BestEffortTable(self.database)
         self.monthly_table = MonthlyTable(self.database)
         self.hori_layout.addWidget(self.best_effort)
         self.hori_layout.addWidget(self.monthly_table)
+
+        self.layout.removeWidget(self.bar_chart)
+        self.bar_chart = BarChartWidget(self.database)
         self.layout.addWidget(self.bar_chart)
 
 

@@ -109,7 +109,7 @@ class DatabaseHandler():
             self.fill_monthly(month)
         else: 
             data = data[0]
-            new_tot_distance = data[2]+distance
+            new_tot_distance = "%.2f" % float(data[2]+distance)
             try:
                 t_data = datetime.strptime(data[3],"%d day, %H:%M:%S") 
             except ValueError:
@@ -134,20 +134,20 @@ class DatabaseHandler():
         return self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month DESC ''', True)
 
     def fill_monthly(self, month):
-        last_month = self.cmd_to_database(f'''SELECT month FROM monthly ORDER BY month DESC ''', True)[0][0]
-        first_month = self.cmd_to_database(f'''SELECT month FROM monthly ORDER BY month ASC ''', True)[0][0]
-        month = self.get_next_month(first_month)
-        while month != last_month:
-            print(f"month in loop {month}")
+        data = self.cmd_to_database(f'''SELECT * FROM monthly''', True)
+        if len(data)>1:
+            last_month = self.cmd_to_database(f'''SELECT month FROM monthly ORDER BY month DESC ''', True)[0][0]
+            first_month = self.cmd_to_database(f'''SELECT month FROM monthly ORDER BY month ASC ''', True)[0][0]
+            month = self.get_next_month(first_month)
+            while month != last_month:
+                print(f"month in loop {month}")
 
-            self.add_month(month)
-            month = self.get_next_month(month)
+                self.add_month(month)
+                month = self.get_next_month(month)
 
         
     def add_month(self, month):
         data = self.cmd_to_database(f'''SELECT * FROM monthly WHERE month = "{month}"''', True)
-        print(f"data is {data}")
-        print(f"len(data) is {len(data)}")
         if len(data)==0:
             print(f"Inserting month {month}")
             cmd = f''' INSERT INTO monthly(month, tot_distance, tot_time, nb_activities)

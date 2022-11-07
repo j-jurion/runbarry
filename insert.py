@@ -1,7 +1,10 @@
 import re
+import math
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
+from datetime import timedelta, datetime
+
 
 class Insert(QWidget):
 
@@ -25,7 +28,12 @@ class Insert(QWidget):
         self.date.setFixedHeight(170)
 
         self.distance = QLineEdit()
-        self.distance.setValidator(QDoubleValidator().setNotation(QDoubleValidator.Notation.StandardNotation))
+        doubleValidator = QDoubleValidator()
+        doubleValidator.setBottom(0)
+        doubleValidator.setDecimals(2)
+        doubleValidator.setLocale(QLocale("en"))
+        doubleValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        self.distance.setValidator(doubleValidator)
         self.distance.setFixedWidth(WIDGET_WIDTH)
 
         self.time = QLineEdit ()
@@ -33,12 +41,6 @@ class Insert(QWidget):
         validator = QRegularExpressionValidator(rx, self)
         self.time.setValidator(validator )
         self.time.setFixedWidth(WIDGET_WIDTH)
-
-        self.pace = QLineEdit()
-        rx = QRegularExpression(r"[0-9]:[0-5][0-9]")
-        validator = QRegularExpressionValidator(rx, self)
-        self.pace.setValidator(validator)
-        self.pace.setFixedWidth(WIDGET_WIDTH)
 
         submit_button = QPushButton("Submit")
         submit_button.setFixedWidth(100)
@@ -53,7 +55,6 @@ class Insert(QWidget):
         form_lyt.addRow("Date ", self.date)
         form_lyt.addRow("Distance (km)", self.distance)
         form_lyt.addRow("Time (hh:mm:ss)", self.time)
-        form_lyt.addRow("Pace (m:ss)", self.pace)
         
 
         layout = QVBoxLayout()
@@ -76,8 +77,8 @@ class Insert(QWidget):
         else: 
             self.submit_status.hide()
 
-    def is_valid_input(self, name, distance, time, pace):
-        if name != "" and distance != "" and pace != "" and time != "":
+    def is_valid_input(self, name, distance, time):
+        if name != "" and distance != "" and time != "":
             return True
         else: 
             self.submit_status_change(True, True, "Input is not valid!")
@@ -88,7 +89,6 @@ class Insert(QWidget):
         self.date.showToday()
         self.date.setSelectedDate(QDate.currentDate())
         self.distance.setText("")
-        self.pace.setText("")
         self.time.setText("")
 
     def pace_to_speed(self, pace):
@@ -100,9 +100,10 @@ class Insert(QWidget):
         return "%.1f" % speed
 
     def submit_pressed(self): 
-        if self.is_valid_input(self.name.text(), self.distance.text(), self.time.text(), self.pace.text()):
+        self.pace = self.calc_pace(float(self.distance.text()), self.time.text())
+        if self.is_valid_input(self.name.text(), self.distance.text(), self.time.text()):
             self.submit(self.name.text(), self.date.selectedDate().toString('yyyy-MM-dd'), float(self.distance.text()), 
-                self.time.text(), self.pace.text(), self.pace_to_speed(self.pace.text()))
+                self.time.text(), self.pace, self.pace_to_speed(self.pace))
             self.submit_status_change(True, False, "Input is submitted!")
             self.clear_inputs()
     
@@ -114,4 +115,19 @@ class Insert(QWidget):
         self.submit_status.hide()
         self.show()
 
+    def calc_pace(self, distance, time):
+        try:
+            t_data = datetime.strptime(time,"%H:%M:%S") 
+        except ValueError:
+            t_data = datetime.strptime(time,"%M:%S") 
+        
+        time_in_min = t_data.hour*60 + t_data.minute + t_data.second/60
+        pace = time_in_min/distance
+
+        p_min = int(pace)
+        p_sec = round((pace - p_min)*60)
+        
+        if p_sec < 10:
+            p_sec = f"0{p_sec}"
+        return f"{p_min}:{p_sec}"
         
