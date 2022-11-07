@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from datetime import timedelta, datetime
+from constants import Constants
 
 
 class Insert(QWidget):
@@ -15,7 +16,7 @@ class Insert(QWidget):
         self.database = database
 
         # Widgets
-        text = QLabel("Insert new activity!")
+        text = QLabel("Insert new activity")
         text.setStyleSheet(''' font-size: 24px; font-weight: bold;''')
 
         self.name = QLineEdit()
@@ -52,9 +53,9 @@ class Insert(QWidget):
         # Layout
         form_lyt = QFormLayout()
         form_lyt.addRow("Name your activity ", self.name)
-        form_lyt.addRow("Date ", self.date)
-        form_lyt.addRow("Distance (km)", self.distance)
-        form_lyt.addRow("Time (hh:mm:ss)", self.time)
+        form_lyt.addRow(Constants.DATA_TYPES[1], self.date)
+        form_lyt.addRow(Constants.DATA_TYPES[2] + "(km)", self.distance)
+        form_lyt.addRow(Constants.DATA_TYPES[3] + "(hh:mm:ss)", self.time)
         
 
         layout = QVBoxLayout()

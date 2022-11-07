@@ -16,7 +16,13 @@ class BarChartWidget(QWidget):
         layout = QVBoxLayout()
         chart = BarChart(database)
         layout.addWidget(chart)
-        self.setLayout(layout)
+        layout.addStretch()
+
+        lyt = QVBoxLayout()
+        group_box = QGroupBox("Graph Total Distance")
+        group_box.setLayout(layout)
+        lyt.addWidget(group_box)
+        self.setLayout(lyt)
 
 
 class BarChart(FigureCanvasQTAgg):
@@ -24,6 +30,7 @@ class BarChart(FigureCanvasQTAgg):
     def __init__(self, database):
         fig = Figure(figsize=(5, 10), dpi=100)
         self.axes = fig.add_subplot(111)
+        #fig.subplots_adjust(bottom=0, top=1)
 
         super(BarChart, self).__init__(fig)
         
@@ -34,5 +41,6 @@ class BarChart(FigureCanvasQTAgg):
             y.append(m[2])
 
         self.axes.bar(x, y, width=0.8, color='lightblue')
-        self.axes.set_xticklabels(x, rotation=45)
-        plt.xticks(rotation = 45)
+
+        #elf.axes.set_xticklabels(x, rotation=45)
+        #plt.xticks(rotation = 45)

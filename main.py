@@ -21,31 +21,26 @@ class MainWindow(QMainWindow):
         self.refresh_db()
 
         # Button definition
-        self.button_home = QPushButton("Home")
-        self.button_home.setStyleSheet('font : bold ; background-color: lightblue')
         self.button_insert = QPushButton("Insert")
+        self.button_insert.setStyleSheet('font : bold ; background-color: lightblue')
         self.button_view_all = QPushButton("Activities")
         self.button_stats = QPushButton("Statistics")
 
         # Button layout
         self.button_layout = QHBoxLayout()
-        self.button_layout.addWidget(self.button_home)
         self.button_layout.addWidget(self.button_insert)
         self.button_layout.addWidget(self.button_view_all)
         self.button_layout.addWidget(self.button_stats)
 
         # Initialize widgets
-        self.home_widget = Home()
         self.insert_widget = Insert(self.database)
         self.overview_widget = Overview(self.database)
         self.stats_widget = Statistics(self.database)
-        self.insert_widget.hide()
         self.overview_widget.hide()
         self.stats_widget.hide()
 
         # Data layout
         self.data_layout = QVBoxLayout()
-        self.data_layout.addWidget(self.home_widget)
         self.data_layout.addWidget(self.insert_widget)
         self.data_layout.addWidget(self.overview_widget)
         self.data_layout.addWidget(self.stats_widget)
@@ -61,21 +56,12 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
         # Button actions
-        self.button_home.clicked.connect(self.load_home)
         self.button_insert.clicked.connect(self.load_insert)
         self.button_view_all.clicked.connect(self.load_view_all)
         self.button_stats.clicked.connect(self.load_stats)
         
-    def load_home(self):
-        self.button_style_selected(self.button_home)
-        self.overview_widget.hide()
-        self.insert_widget.hide()
-        self.stats_widget.hide()
-        self.home_widget.show()
-
     def load_insert(self):
         self.button_style_selected(self.button_insert)
-        self.home_widget.hide()
         self.overview_widget.hide()
         self.stats_widget.hide()
         self.insert_widget.display()
@@ -83,7 +69,6 @@ class MainWindow(QMainWindow):
     def load_view_all(self):
         self.button_style_selected(self.button_view_all)
         self.refresh_db()
-        self.home_widget.hide()
         self.insert_widget.hide()
         self.stats_widget.hide()
         self.overview_widget.display(self.database)
@@ -91,13 +76,11 @@ class MainWindow(QMainWindow):
     def load_stats(self):
         self.button_style_selected(self.button_stats)
         self.refresh_db()
-        self.home_widget.hide()
         self.overview_widget.hide()
         self.insert_widget.hide()
         self.stats_widget.display(self.database)
     
     def button_style_selected(self, button):
-        self.button_home.setStyleSheet('')
         self.button_insert.setStyleSheet('')
         self.button_view_all.setStyleSheet('')
         self.button_stats.setStyleSheet('')

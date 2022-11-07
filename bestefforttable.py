@@ -8,11 +8,7 @@ class BestEffortTable(QWidget):
     def __init__(self, database):
         super(BestEffortTable, self).__init__()
 
-        layout = QVBoxLayout()
-
-        group_box = QGroupBox("Best Efforts")
         best_lyt = QGridLayout()
-        group_box.setLayout(best_lyt)
 
         # Column Names
         count = 0
@@ -47,7 +43,9 @@ class BestEffortTable(QWidget):
                 none_lbl.setStyleSheet(''' font: italic ''')
                 best_lyt.addWidget(none_lbl, d+1, 1)
 
-
+        layout = QVBoxLayout()
+        group_box = QGroupBox("Best Efforts")
+        group_box.setLayout(best_lyt)
         layout.addWidget(group_box)
-        layout.addStretch()
+        #layout.addStretch()
         self.setLayout(layout)
