@@ -2,11 +2,41 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from helperclasses.constants import Constants
+import inspect
+
+
+class ActivityLayout(QWidget):
+    def __init__(self, activity, overview, latest_activity_id):
+        super(ActivityLayout, self).__init__()
+
+        icon = QIcon()
+        icon.addPixmap(QPixmap("images/remove.png"))
+
+        name = QLabel(str(activity[1]))
+        date = QLabel(str(activity[2]))
+        distance = QLabel(str(activity[3]))
+        time = QLabel(str(activity[4]))
+        pace = QLabel(str(activity[5]))
+        speed = QLabel(str(activity[6]))
+        remove_btn = QToolButton()
+        remove_btn.setIcon(icon)
+        remove_btn.clicked.connect(lambda:overview.remove_activity(activity))
+
+        if activity[0] == latest_activity_id:
+            background_color = "yellow"
+            name.setStyleSheet(f"background-color : {background_color}")
+            date.setStyleSheet("background-color : yellow")
+            distance.setStyleSheet("background-color : yellow")
+            time.setStyleSheet("background-color : yellow")
+            pace.setStyleSheet("background-color : yellow")
+            speed.setStyleSheet("background-color : yellow")
+
+        self.get = [name, date, distance, time, pace, speed, remove_btn] 
 
 
 class ActivityTable(QWidget):
 
-    def __init__(self, activities, latest_activity):
+    def __init__(self, activities, latest_activity, overview):
         super(ActivityTable, self).__init__()
 
         # Table Layout
@@ -20,32 +50,15 @@ class ActivityTable(QWidget):
             table_lyt.addWidget(label, 0, d)
 
         
-
         # Add Activities
         row = 1
+        
         for a in activities:
-            a1 = QLabel(str(a[1]))
-            a2 = QLabel(str(a[2]))
-            a3 = QLabel(str(a[3]))
-            a4 = QLabel(str(a[4]))
-            a5 = QLabel(str(a[5]))
-            a6 = QLabel(str(a[6]))
+            activity = ActivityLayout(a, overview, latest_activity[0])
 
-            if a[0] == latest_activity[0]:
-                background_color = "yellow"
-                a1.setStyleSheet(f"background-color : {background_color}")
-                a2.setStyleSheet("background-color : yellow")
-                a3.setStyleSheet("background-color : yellow")
-                a4.setStyleSheet("background-color : yellow")
-                a5.setStyleSheet("background-color : yellow")
-                a6.setStyleSheet("background-color : yellow")
+            for i in range(7):
+                table_lyt.addWidget(activity.get[i], row, i)
 
-            table_lyt.addWidget(a1, row, 0)
-            table_lyt.addWidget(a2, row, 1)
-            table_lyt.addWidget(a3, row, 2)
-            table_lyt.addWidget(a4, row, 3)
-            table_lyt.addWidget(a5, row, 4)
-            table_lyt.addWidget(a6, row, 5)
             row=row+1
 
         lay2 = QVBoxLayout()

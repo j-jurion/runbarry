@@ -54,7 +54,7 @@ class Overview(QWidget):
         self.activities = self.database.get_activities("All", "date", "DESC")
 
         # Create Table Widget
-        self.table = ActivityTable(self.activities, self.database.latest_activity)
+        self.table = ActivityTable(self.activities, self.database.latest_activity, self)
         self.table_lyt = QVBoxLayout()
         self.table_lyt.addWidget(self.table)
  
@@ -74,8 +74,12 @@ class Overview(QWidget):
             self.sorter.sorter_cb.currentText(), self.sorter.order_btn_string())
 
         self.table_lyt.removeWidget(self.table)
-        self.table = ActivityTable(self.activities, self.database.latest_activity)
+        self.table = ActivityTable(self.activities, self.database.latest_activity, self)
         self.table_lyt.addWidget(self.table)
+    
+    def remove_activity(self, activity):
+        self.database.remove_activity(activity)
+        self.refresh_table()
 
 
     def display(self, new_database):

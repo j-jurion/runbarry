@@ -51,12 +51,25 @@ class Statistics(QWidget):
         self.hori_layout.addWidget(self.best_effort)
         self.hori_layout.addWidget(self.monthly_table)
 
+        month_refresh_btn = QToolButton()
+        icon = QIcon()
+        icon.addPixmap(QPixmap("images/refresh.png"))
+        month_refresh_btn.setIcon(icon)
+        month_refresh_btn.clicked.connect(self.recreate_monthly)
+        btn_lyt = QHBoxLayout()
+        btn_lyt.addWidget(month_refresh_btn)
+        btn_lyt.setAlignment(Qt.AlignmentFlag.AlignRight)
+
         # Main layout 
         self.layout = QVBoxLayout()
         self.layout.addLayout(self.hori_layout)
+        self.layout.addLayout(btn_lyt)
         self.layout.addWidget(self.bar_chart )
         self.setLayout(self.layout)
-        
+    
+    def recreate_monthly(self):
+        self.database.recreate_monthly()
+        self.refresh_stats()
 
     def refresh_stats(self):
         """

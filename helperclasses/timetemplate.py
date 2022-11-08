@@ -70,9 +70,14 @@ class TimeTemplate():
         time_str2 : str
             string to be added to datetime object time_dt
         """
-        time_delta = timedelta(days = self.time_dt.day, hours=self.time_dt.hour, minutes=self.time_dt.minute, seconds=self.time_dt.second)
+        print(f"SELF.TIME_DT {self.time_dt}")
+        time_delta = timedelta(days = self.time_dt.day-1, hours=self.time_dt.hour, minutes=self.time_dt.minute, seconds=self.time_dt.second)
+        print(f"TIME_DELTA {time_delta}")
+        print(f"TIME_STR2 {time_str2}")
         time_dt2 = self.convert_to_datetime(time_str2)
-        time_delta2 = timedelta(days=time_dt2.day, hours=time_dt2.hour, minutes=time_dt2.minute, seconds=time_dt2.second)
+        print(f"TIME_DT2 {time_dt2}")
+        time_delta2 = timedelta(days=time_dt2.day-1, hours=time_dt2.hour, minutes=time_dt2.minute, seconds=time_dt2.second)
+        print(f"TIME_DELTA2 {time_delta2}")
         return str(time_delta + time_delta2)
 
 

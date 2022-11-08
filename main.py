@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
     Attributes
     ----------
     db_file : str
-        the database used in the application
+        File name of the database used in the application
 
     Methods
     -------

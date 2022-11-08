@@ -127,7 +127,7 @@ class DatabaseHandler():
             A tuple consisting of all activity parameters
         """
         self.create_connection()
-        cmd = f''' INSERT INTO activities(name,date, distance, time, pace, speed)
+        cmd = f''' INSERT INTO activities(name, date, distance, time, pace, speed)
               VALUES{activity_list} '''
         self.cmd_to_database(cmd)
 
@@ -185,6 +185,11 @@ class DatabaseHandler():
         except IndexError: 
             return None
 
+    def remove_activity(self, activity):
+        print(f"ACTIVITY {activity}")
+        self.cmd_to_database(f'''DELETE FROM activities WHERE id = {activity[0]}''')
+        self.refresh_month(activity[2][:7]) ;#YYYY-MM
+
     ########################################################################
     # Monthly Functions
     ########################################################################
@@ -209,6 +214,7 @@ class DatabaseHandler():
               VALUES("{month}",{distance},"{str(time)}",1) '''
             self.cmd_to_database(cmd)
             self.fill_monthly(month)
+            self.clean_monthly()
         else: 
             # Accumulate data to existing month
             data = data[0]
@@ -244,8 +250,32 @@ class DatabaseHandler():
             while month != last_month:
                 self.add_month(month)
                 month = self.get_next_month(month)
+    
+    def clean_monthly(self):
+        data = self.cmd_to_database(f'''SELECT * FROM monthly''', True)
+        print(f"DATA {data}")
+        if len(data)>0:
+            last_month = self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month DESC ''', True)[0]
+            print(f"LAST MONTH: {last_month}")
+            while self.is_empty(last_month):
+                print(f"LAST MONTH EMPTY: {last_month}")
+                self.cmd_to_database(f'''DELETE FROM monthly WHERE month = "{last_month[1]}"''')
+                last_month = self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month DESC ''', True)[0]
+            first_month = self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month ASC ''', True)[0]
+            print(f"FIRST MONTH: {first_month}")
+            while self.is_empty(first_month):
+                print(f"FIRST MONTH EMPTY: {first_month}")
+                self.cmd_to_database(f'''DELETE FROM monthly WHERE month = "{first_month[1]}"''')
+                first_month = self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month ASC ''', True)[0]
 
-        
+
+    def is_empty(self, month):
+        if len(month) > 0:
+            if month[4] == 0: 
+                return True
+            else: 
+                return False
+
     def add_month(self, month):
         """
         Insert month as empty month if month does not exist yet in database
@@ -288,3 +318,17 @@ class DatabaseHandler():
         next_month = month + relativedelta(months=1)
         return datetime.strftime(next_month,"%Y-%m") 
         
+    def refresh_month(self, month):
+        self.cmd_to_database(f'''DELETE FROM monthly WHERE month = "{month}"''')
+        self.clean_monthly()
+        activities =  self.cmd_to_database(f'''SELECT * FROM activities WHERE date LIKE "{month}-%"''', True)
+        for a in activities:
+            a=a[1:] ;#Remove first element of tuple (which is the id)
+            self.update_monthly(a)
+
+    def recreate_monthly(self):
+        self.cmd_to_database(f'''DELETE FROM monthly''')
+        activities =  self.cmd_to_database(f'''SELECT * FROM activities''', True)
+        for a in activities:
+            a=a[1:] ;#Remove first element of tuple (which is the id)
+            self.update_monthly(a)
