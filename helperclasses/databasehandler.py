@@ -174,7 +174,7 @@ class DatabaseHandler():
         """
         if filter == "All":
             return self.cmd_to_database(f'''SELECT * FROM activities ORDER BY {sort_by} {order}''', True)
-        return self.cmd_to_database(f'''SELECT * FROM activities WHERE distance BETWEEN {filter-1} and {filter+1} ORDER BY {sort_by} {order} ''', True)
+        return self.cmd_to_database(f'''SELECT * FROM activities WHERE distance BETWEEN {filter-0.1} and {filter+1.55} ORDER BY {sort_by} {order} ''', True)
         
     def find_latest_activity(self):
         """
@@ -186,7 +186,6 @@ class DatabaseHandler():
             return None
 
     def remove_activity(self, activity):
-        print(f"ACTIVITY {activity}")
         self.cmd_to_database(f'''DELETE FROM activities WHERE id = {activity[0]}''')
         self.refresh_month(activity[2][:7]) ;#YYYY-MM
 
@@ -253,18 +252,13 @@ class DatabaseHandler():
     
     def clean_monthly(self):
         data = self.cmd_to_database(f'''SELECT * FROM monthly''', True)
-        print(f"DATA {data}")
         if len(data)>0:
             last_month = self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month DESC ''', True)[0]
-            print(f"LAST MONTH: {last_month}")
             while self.is_empty(last_month):
-                print(f"LAST MONTH EMPTY: {last_month}")
                 self.cmd_to_database(f'''DELETE FROM monthly WHERE month = "{last_month[1]}"''')
                 last_month = self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month DESC ''', True)[0]
             first_month = self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month ASC ''', True)[0]
-            print(f"FIRST MONTH: {first_month}")
             while self.is_empty(first_month):
-                print(f"FIRST MONTH EMPTY: {first_month}")
                 self.cmd_to_database(f'''DELETE FROM monthly WHERE month = "{first_month[1]}"''')
                 first_month = self.cmd_to_database(f'''SELECT * FROM monthly ORDER BY month ASC ''', True)[0]
 

@@ -29,7 +29,6 @@ class BarChart(FigureCanvasQTAgg):
     def __init__(self, database):
         fig = Figure(figsize=(5, 10), dpi=100)
         self.axes = fig.add_subplot(111)
-        #fig.subplots_adjust(bottom=0, top=1)
 
         super(BarChart, self).__init__(fig)
         
@@ -41,5 +40,7 @@ class BarChart(FigureCanvasQTAgg):
 
         self.axes.bar(x, y, width=0.8, color=Constants.COLOR_PRIM)
 
-        #elf.axes.set_xticklabels(x, rotation=45)
-        #plt.xticks(rotation = 45)
+        self.axes.set_xticks(self.axes.get_xticks())
+        self.axes.set_xticklabels(x, rotation=90)
+
+        fig.subplots_adjust(bottom=0.25, top=0.95)

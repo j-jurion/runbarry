@@ -6,7 +6,7 @@ from helperclasses.constants import Constants
 
 class MonthlyTable(QWidget):
 
-    def __init__(self, database):
+    def __init__(self, database, stats):
         super(MonthlyTable, self).__init__()
 
         months = database.get_months()
@@ -53,4 +53,21 @@ class MonthlyTable(QWidget):
         group_box = QGroupBox("Monthly")
         group_box.setLayout(main_lyt)
         lyt.addWidget(group_box)
+
         self.setLayout(lyt)
+
+        
+        # Refresh Button
+        month_refresh_btn = QToolButton(parent=self)
+        icon = QIcon()
+        icon.addPixmap(QPixmap(Constants.REFRESH_FILENAME))
+        month_refresh_btn.setIcon(icon)
+        month_refresh_btn.move(65, 7)
+        month_refresh_btn.clicked.connect(stats.recreate_monthly)
+
+        size = QSize()
+        size.setHeight(20)
+        size.setWidth(20)
+        month_refresh_btn.setFixedSize(size)
+
+        

@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from helperclasses.constants import Constants
-import inspect
 
 
 class ActivityLayout(QWidget):
@@ -10,7 +9,7 @@ class ActivityLayout(QWidget):
         super(ActivityLayout, self).__init__()
 
         icon = QIcon()
-        icon.addPixmap(QPixmap("images/remove.png"))
+        icon.addPixmap(QPixmap(Constants.REMOVE_FILENAME))
 
         name = QLabel(str(activity[1]))
         date = QLabel(str(activity[2]))
