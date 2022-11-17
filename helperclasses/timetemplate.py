@@ -149,9 +149,10 @@ class PaceTemplate(TimeTemplate):
             p_min = p_min+1
             p_sec = 0
         
-        
         if p_sec < 10:
             p_sec = f"0{p_sec}"
+        if p_min < 10:
+            p_min = f"0{p_min}"
         return f"{p_min}:{p_sec}"
 
     def calc_speed(self):

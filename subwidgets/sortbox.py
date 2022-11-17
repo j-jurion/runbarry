@@ -12,8 +12,9 @@ class Sorter(QWidget):
         self.desc ="\u25B2"
 
         self.sorter_cb = QComboBox()
-        self.sorter_cb.addItems([Constants.DATA_TYPES[1], Constants.DATA_TYPES[4], Constants.DATA_TYPES[3]])
+        self.sorter_cb.addItems([Constants.DATA_TYPES[0], Constants.DATA_TYPES[1], Constants.DATA_TYPES[2], Constants.DATA_TYPES[3], Constants.DATA_TYPES[4], Constants.DATA_TYPES[5]])
         self.sorter_cb.setFixedWidth(70)
+        self.sorter_cb.setCurrentIndex(1)
         self.sorter_cb.currentIndexChanged.connect(connectFunction)
 
         self.order_btn = QPushButton(self.desc)

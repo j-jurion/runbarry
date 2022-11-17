@@ -69,9 +69,9 @@ class Insert(QWidget):
         self.distance.setFixedWidth(WIDGET_WIDTH)
 
         self.time = QLineEdit ()
-        rx = QRegularExpression(r"[0-9]?[0-9]:[0-5][0-9]:[0-5][0-9]")
+        rx = QRegularExpression(r"[0-9]:[0-5][0-9]:[0-5][0-9]")
         validator = QRegularExpressionValidator(rx, self)
-        self.time.setValidator(validator )
+        self.time.setValidator(validator)
         self.time.setFixedWidth(WIDGET_WIDTH)
 
         submit_button = QPushButton("Submit")
@@ -86,7 +86,7 @@ class Insert(QWidget):
         form_lyt.addRow("Name your activity ", self.name)
         form_lyt.addRow(Constants.DATA_TYPES[1], self.date)
         form_lyt.addRow(Constants.DATA_TYPES[2] + "(km)", self.distance)
-        form_lyt.addRow(Constants.DATA_TYPES[3] + "(hh:mm:ss)", self.time)
+        form_lyt.addRow(Constants.DATA_TYPES[3] + "(h:mm:ss)", self.time)
         
         # Define overlapping main layout
         layout = QVBoxLayout()
@@ -135,7 +135,7 @@ class Insert(QWidget):
         time : str
             Time of new activity
         """
-        if name != "" and distance != "" and time != "":
+        if name != "" and distance != "" and time != "" and len(time)>=7:
             return True
         else: 
             self.submit_status_change(True, True, "Input is not valid!")

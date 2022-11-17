@@ -173,7 +173,7 @@ class DatabaseHandler():
             Defines ordering of the sort (ASC: ascending, DESC: descending)
         """
         if filter == "All":
-            return self.cmd_to_database(f'''SELECT * FROM activities ORDER BY {sort_by} {order}''', True)
+                return self.cmd_to_database(f'''SELECT * FROM activities ORDER BY {sort_by} {order}''', True)
         return self.cmd_to_database(f'''SELECT * FROM activities WHERE distance BETWEEN {filter-0.1} and {filter+1.55} ORDER BY {sort_by} {order} ''', True)
         
     def find_latest_activity(self):
