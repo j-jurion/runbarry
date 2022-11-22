@@ -1,8 +1,10 @@
 import sqlite3
+import os
 from sqlite3 import Error
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from helperclasses.timetemplate import TimeTemplate
+from helperclasses.constants import Constants
 
 
 class DatabaseHandler():
@@ -105,6 +107,8 @@ class DatabaseHandler():
         """ Create a database connection to a SQLite database """
         self.conn = None
         try:
+            if not os.path.exists(self.db_file):
+                os.mkdir(Constants.DB_DIR)
             self.conn = sqlite3.connect(self.db_file)
             #print(sqlite3.version)
         except Error as e:

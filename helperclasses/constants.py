@@ -16,4 +16,5 @@ class Constants():
     REFRESH_FILENAME = "images/refresh.png"
     REMOVE_FILENAME = "images/remove.png"
 
-    DB_FILENAME = "db/activities.db"
+    DB_DIR = "db/"
+    DB_FILENAME = DB_DIR + "activities.db"
